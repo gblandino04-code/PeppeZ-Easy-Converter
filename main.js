@@ -41,7 +41,6 @@ function boot() {
 
   const foreground = new Foreground();
   hud = new Hud({ BrowserWindow, screen, ipcMain, Notification, engine, queue, settings, root: __dirname });
-  hud.create(); // Pre-carica la finestra HUD trasparente in memoria per apertura istantanea a latenza zero
   function startHooks() { foreground.start(); hook = startHook({ hud, foreground, settings }); send('hook', { ok: hook.ok }); }
 
   function showMain() { if (!win || win.isDestroyed()) createWindow(); if (win.isMinimized()) win.restore(); win.show(); win.focus(); }
@@ -80,4 +79,5 @@ function boot() {
   app.on('before-quit', () => { quitting = true; try { engine.stopAll(); } catch { } try { hook.stop && hook.stop(); } catch { } try { foreground.stop(); } catch { } });
   app.on('window-all-closed', () => { if (!tray) app.quit(); });
 }
+
 boot();
