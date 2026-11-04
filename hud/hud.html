@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><title>PeppeZ HUD</title><link rel="stylesheet" href="hud.css"></head>
+<body>
+<div id="wheel" class="wheel">
+  <svg id="svg" width="460" height="460" viewBox="0 0 460 460"></svg>
+  <div id="center" class="center">
+    <div id="cTitle" class="ct">Converti in</div>
+    <div id="cSub" class="cs">Rilascia su un formato</div>
+    <div id="cDots" class="dots"></div>
+    <div id="cBusy" class="busy" hidden><i class="ring"></i><b id="cBusyT">In corso…</b></div>
+    <div id="cDone" class="done" hidden><i class="mark"></i><b id="cDoneT"></b><small id="cDoneS"></small></div>
+  </div>
+</div>
+<div id="panel" class="panel" hidden>
+  <div class="ph" id="pTitle"></div>
+  <div id="pBody"></div>
+  <div class="pf"><button id="pCancel" class="b2">Annulla</button><button id="pOk" class="b1">Avvia</button></div>
+</div>
+<script src="hud.js"></script>
+</body></html>

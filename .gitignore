@@ -1,0 +1,25 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Electron-builder distribution packages & uncompressed outputs
+dist/
+out/
+
+# Filee portable downloaded engine binaries (fetched automatically via `npm run get-filee`)
+engine/filee/
+engine/*.zip
+
+# Operating System & IDE files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Temporary / test files
+*.tmp
+*.log

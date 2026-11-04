@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>PeppeZ Easy Converter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="titlebar" id="titlebar"><img src="assets/icons/logo-pz.png" alt=""><span>PeppeZ Easy Converter</span></div>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><img class="logo" src="assets/icons/logo-pz.png" alt=""><b>PeppeZ Easy Converter</b><small>100% Locale & Offline</small></div>
+    <nav id="nav">
+      <button data-page="home" class="on"><img src="assets/icons/nav-home.png" alt="">Panoramica</button>
+      <button data-page="convert"><img src="assets/icons/nav-converti.png" alt="">Converti</button>
+      <button data-page="customize"><img src="assets/icons/nav-preferiti.png" alt="">Personalizza</button>
+      <button data-page="watch"><img src="assets/icons/nav-cartelle.png" alt="">Cartelle monitorate</button>
+      <button data-page="history"><img src="assets/icons/nav-cronologia.png" alt="">Cronologia</button>
+      <i class="sep"></i>
+      <button data-page="engines"><img src="assets/icons/nav-motori.png" alt="">Motori</button>
+      <button data-page="settings"><img src="assets/icons/nav-impostazioni.png" alt="">Impostazioni</button>
+    </nav>
+    <div class="local"><img src="assets/icons/g-local-ok.png" alt=""><div><b>Tutto locale</b><span>Le conversioni avvengono sul tuo PC, senza upload.</span></div></div>
+  </aside>
+
+  <main class="main">
+    <div class="banner" id="engineBanner" hidden><span>Motore di conversione nativo non trovato: senza di esso non si può convertire.</span><button class="btn" id="bannerFix">Collega motore</button></div>
+    <div class="pages">
+
+      <!-- PANORAMICA -->
+      <section class="page on" id="page-home">
+        <header class="hero">
+          <div><h1>Converti qualsiasi file</h1><p class="sub"><img src="assets/icons/g-shield.png" alt=""><span id="heroSub">… formati</span></p></div>
+          <div class="tools">
+            <label class="search"><img src="assets/icons/g-search.png" alt=""><input id="q" placeholder="Cerca un formato…" autocomplete="off"><div class="sres" id="qres" hidden></div></label>
+            <button class="sq" id="btnTheme" title="Tema chiaro/scuro"><img src="assets/icons/g-sun.png" alt=""></button>
+            <button class="sq" id="btnGear" title="Impostazioni"><img src="assets/icons/g-gear.png" alt=""></button>
+          </div>
+        </header>
+        <div class="grid">
+          <div class="left">
+            <div class="drop" id="drop">
+              <img class="cloud" src="assets/icons/cloud-upload.png" alt="">
+              <h2>Trascina qui i tuoi file</h2>
+              <p>oppure <a href="#" id="pick">seleziona dal computer</a></p>
+              <div class="chips" id="chips"></div>
+            </div>
+            <div class="cats" id="cats"></div>
+          </div>
+          <aside class="recent panel">
+            <div class="ph"><img src="assets/icons/g-history.png" alt=""><h3>Conversioni recenti</h3><a href="#" data-go="history">Vedi tutte →</a></div>
+            <div class="rlist" id="recent"></div>
+          </aside>
+        </div>
+        <div class="qa-head"><img src="assets/icons/g-bolt.png" alt=""><b>Azioni rapide</b><span class="tip">Suggerimento: tieni premuto <kbd>Maiusc</kbd> mentre trascini un file in Esplora risorse</span></div>
+        <div class="qa" id="qa"></div>
+      </section>
+
+      <!-- CONVERTI -->
+      <section class="page" id="page-convert">
+        <header class="phead"><h1>Converti</h1><p>Scegli un formato di partenza per vedere in cosa si può convertire.</p></header>
+        <div class="fx">
+          <div class="fx-groups" id="fxGroups"></div>
+          <div class="fx-main"><input class="fx-q" id="fxq" placeholder="Filtra i formati…"><div class="fx-grid" id="fxGrid"></div></div>
+          <div class="fx-side panel" id="fxSide"><p class="muted">Seleziona un formato.</p></div>
+        </div>
+      </section>
+
+      <!-- PERSONALIZZA -->
+      <section class="page" id="page-customize">
+        <header class="phead cuhead"><div><h1>Personalizza le ruote</h1><p>Per ogni formato scegli quali conversioni compaiono nella ruota <kbd>Maiusc</kbd> e quali strumenti nella ruota <kbd>Ctrl</kbd>. Si vedono solo le conversioni possibili. Quando un formato ha più di 8 conversioni, puoi scegliere fino a <b>7 spicchi</b>: l'8° spicchio sarà <b>ALTRO…</b> per aprire l'elenco completo.</p></div><button class="btn" id="cuResetAll">Ripristina tutto</button></header>
+        <div class="fx cu">
+          <div class="fx-groups" id="cuGroups"></div>
+          <div class="fx-main"><input class="fx-q" id="cuq" placeholder="Filtra i formati…"><div class="fx-grid" id="cuGrid"></div></div>
+          <div class="fx-side panel" id="cuSide"><p class="muted">Seleziona un formato.</p></div>
+        </div>
+      </section>
+
+      <!-- CARTELLE MONITORATE -->
+      <section class="page" id="page-watch">
+        <header class="phead"><h1>Cartelle monitorate</h1><p>Ogni file che arriva in una cartella viene convertito da solo.</p></header>
+        <div class="panel form"><div class="frow"><label>Cartella<div class="inl"><input id="wFolder" readonly placeholder="Scegli una cartella…"><button class="btn" id="wPick">Sfoglia</button></div></label>
+          <label>Converti in<input id="wTo" list="fmtList" placeholder="es. pdf, jpg, mp3"></label>
+          <label class="chk"><input type="checkbox" id="wMove"> Sposta gli originali in «originals»</label>
+          <button class="btn primary" id="wAdd">Aggiungi</button></div></div>
+        <div class="list" id="wList"></div>
+      </section>
+
+      <!-- CRONOLOGIA -->
+      <section class="page" id="page-history">
+        <header class="phead"><h1>Cronologia</h1><button class="btn" id="hClear">Svuota cronologia</button></header>
+        <div class="list" id="hList"></div>
+      </section>
+
+      <!-- MOTORI -->
+      <section class="page" id="page-engines">
+        <header class="phead ehead">
+          <div>
+            <h1>Motori di conversione</h1>
+            <p>Il motore base nativo gestisce subito immagini, PDF e documenti. Per ampliare le conversioni a video, audio, formati Office complessi, e-book e trascrizioni AI, scarica i motori gratuiti qui sotto (funzionano al 100% offline sul tuo PC).</p>
+          </div>
+          <button class="btn" id="btnEnginesWhy"><img src="assets/icons/g-info.png" alt="" style="width:16px;height:16px;vertical-align:-2px;margin-right:6px">Perché scaricare i motori?</button>
+        </header>
+        <div class="core-card panel" id="coreBox"></div>
+        <div class="eng-sec-title"><h3>Motori opzionali installabili</h3><span class="muted">Si scaricano una volta sola con un clic e si usano sia nell'app che con la ruota</span></div>
+        <div class="list elist-cards" id="eList"></div>
+      </section>
+
+      <!-- IMPOSTAZIONI -->
+      <section class="page" id="page-settings">
+        <header class="phead"><h1>Impostazioni</h1></header>
+        <div class="panel form sform" id="sForm"></div>
+      </section>
+    </div>
+
+    <section class="queue" id="queue" hidden>
+      <div class="qh"><img src="assets/icons/g-queue.png" alt=""><b id="qTitle">Coda di conversione</b><span class="sp"></span><button class="lnk" id="qPause">Pausa tutto <i class="ico-pause"></i></button><button class="lnk" id="qCancel">Annulla tutto <i class="ico-x"></i></button></div>
+      <div class="qlist" id="qlist"></div>
+    </section>
+  </main>
+</div>
+<footer class="foot"><span><img src="assets/icons/g-info.png" alt=""><span id="ver">Versione 1.0.0</span></span><span class="r"><img src="assets/icons/g-bolt2.png" alt=""><span id="footCount">Oltre 270 formati supportati</span></span></footer>
+
+<div class="dropveil" id="veil"><div><img src="assets/icons/cloud-upload.png" alt=""><b>Rilascia per convertire</b></div></div>
+<datalist id="fmtList"></datalist>
+<div class="toasts" id="toasts"></div>
+<div class="modal" id="modal" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "name": "peppez-convert",
+  "productName": "PeppeZ Easy Converter",
+  "version": "1.0.0",
+  "description": "PeppeZ Easy Converter - conversione file offline con ruota Shift+trascina.",
+  "main": "main.js",
+  "author": "PeppeZ",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "node -e \"const fs=require('fs'),p='node_modules/fd-slicer/index.js';if(fs.existsSync(p)){const s=fs.readFileSync(p,'utf8');if(s.includes('this.destroyed = false')){fs.writeFileSync(p,s.replace(/\\b(this|self)\\.destroyed\\b/g,'$1._slicerDestroyed').replace('new Buffer(toRead)','Buffer.allocUnsafe(toRead)'));}}if(fs.existsSync('node_modules/electron/install.js')&&!fs.existsSync('node_modules/electron/dist/electron.exe'))require('./node_modules/electron/install.js');\"",
+    "get-filee": "node scripts/get-filee.js",
+    "start": "electron .",
+    "dev-bridge": "node tools/dev-bridge.js",
+    "build": "node scripts/get-filee.js && electron-builder --win --x64",
+    "setup-electron": "node node_modules/electron/install.js"
+  },
+  "dependencies": {
+    "uiohook-napi": "^1.5.4"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "allowScripts": {
+    "electron": true,
+    "uiohook-napi": true
+  },
+  "build": {
+    "appId": "it.peppez.convert",
+    "npmRebuild": false,
+    "productName": "PeppeZ Easy Converter",
+    "copyright": "PeppeZ (MIT)",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "hud-preload.js", "src/**/*", "app/**/*", "hud/**/*", "package.json", "LICENSE-Filee.txt", "THIRD-PARTY-NOTICES-Filee.md"],
+    "extraResources": [{ "from": "engine/filee", "to": "filee", "filter": ["**/*"] }],
+    "asarUnpack": ["node_modules/uiohook-napi/**/*"],
+    "asar": true,
+    "win": { "icon": "build/icon.ico", "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }] },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "createStartMenuShortcut": true, "installerIcon": "build/icon.ico", "uninstallerIcon": "build/icon.ico", "language": "1040", "artifactName": "PeppeZ-Easy-Converter-Setup-${version}.${ext}" },
+    "portable": { "artifactName": "PeppeZ-Easy-Converter-Portable-${version}.${ext}" }
+  }
+}

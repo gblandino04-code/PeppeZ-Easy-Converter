@@ -1,0 +1,20 @@
+PeppeZ Easy Converter 1.0 - convertitore locale con ruota Maiusc + trascina
+Motore di conversione: Nativo integrato. Tutto avviene sul tuo PC al 100% offline, nessun dato viene inviato.
+
+PROVARE   : doppio clic su PROVA-PROGRAMMA.bat (serve Node.js)
+CREARE EXE: doppio clic su CREA-EXE.bat -> cartella "dist" (installer + versione portabile)
+
+COME SI USA LA RUOTA
+- Tieni premuto il tasto sinistro su un file (Esplora risorse), trascina e premi MAIUSC: compare la ruota delle conversioni.
+- Con CTRL compare la ruota degli strumenti (comprimi, unisci, dividi, ruota...).
+- Lascia il file su una fetta: viene creata una COPIA convertita accanto all'originale (o nella cartella scelta in Impostazioni).
+- Tab o rotellina del mouse = pagina successiva; Esc = annulla.
+- Strumenti con impostazioni: "Comprimi" (immagini e PDF) apre un pannello con qualita' (Forte 50%, Media 75%, Leggera 90% o cursore 10-100) e mostra la dimensione stimata del file compresso calcolata in tempo reale. Il calcolo parte al termine del trascinamento dello slider. "Unisci" (PDF, da 2 file in su) apre l'ordine dei file con frecce su/giu. Nel pannello: Invio = avvia, Esc = annulla.
+- Quando un formato supporta piu' di 8 conversioni, la ruota mostra 7 spicchi principali + lo spicchio "ALTRO..." che apre il mini-HUD con l'elenco completo e barra di ricerca.
+- Vicino ai bordi dello schermo la ruota si sposta automaticamente quanto basta per restare interamente visibile.
+- Sezione "Personalizza" dell'app: per ogni formato scegli (e ordini) le conversioni della ruota Maiusc e gli strumenti della ruota Ctrl. Massimo 7 fette quando ci sono piu' di 8 conversioni (l'8ª e' riservata ad ALTRO...).
+- Si puo' disattivare dall'icona nell'area di notifica o da Impostazioni.
+
+NOTE
+- Il rilevamento globale dei tasti usa uiohook-napi: alcuni antivirus/SmartScreen possono segnalarlo. E' solo ascolto, non modifica nulla.
+- Se il programma non trova il motore: Motori -> collega motore.

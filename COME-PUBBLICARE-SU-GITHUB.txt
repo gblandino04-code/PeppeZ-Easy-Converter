@@ -1,0 +1,44 @@
+========================================================================
+GUIDA RAPIDA: COME PUBBLICARE PEPPEZ EASY CONVERTER SU GITHUB
+========================================================================
+
+Questa cartella "github-repo" contiene ESATTAMENTE e SOLO i file sorgente
+necessari per la pubblicazione open-source su GitHub (senza cartelle pesanti
+come node_modules, dist o binari precompilati, per un totale di soli ~2.7 MB).
+
+Puoi pubblicare in due modi semplicissimi:
+
+------------------------------------------------------------------------
+METODO 1: TRAMITE TERMINALE / GIT BASH (CONSIGLIATO)
+------------------------------------------------------------------------
+1. Crea un nuovo repository vuoto sul tuo account GitHub (es. "PeppeZ-Easy-Converter"),
+   senza aggiungere README o licenze (sono gia' inclusi qui).
+2. Apri il terminale (PowerShell o Git Bash) dentro questa cartella ("github-repo"):
+   
+   cd D:\Progetti\PeppeZConvert\github-repo
+   git init
+   git add .
+   git commit -m "First release: PeppeZ Easy Converter 1.0.0"
+   git branch -M main
+   git remote add origin https://github.com/TUO-USERNAME/PeppeZ-Easy-Converter.git
+   git push -u origin main
+
+------------------------------------------------------------------------
+METODO 2: COPIA E INCOLLA MANUALE (GIA' CLONATO O WEB)
+------------------------------------------------------------------------
+Se hai gia' clonato un repository vuoto dal tuo GitHub sul computer:
+1. Seleziona tutti i file e le cartelle contenuti DENTRO questa cartella "github-repo".
+2. Incollali direttamente dentro la cartella del tuo repository GitHub clonato.
+3. Fai il commit e il push come di consueto.
+
+------------------------------------------------------------------------
+NOTE PER GLI UTENTI CHE SCARICHERANNO IL TUO CODICE:
+------------------------------------------------------------------------
+Tutto e' gia' predisposto nel README.md e nel package.json:
+- Quando un utente clonera' il tuo repository, gli bastera' fare:
+    npm install
+    npm run get-filee
+    npm start
+- E per creare l'eseguibile:
+    doppio clic su CREA-EXE.bat oppure npm run build
+========================================================================
