@@ -19,10 +19,42 @@
 
 ---
 
+## 📸 Screenshot dell'Interfaccia
+
+### 🖥️ Finestra Principale (Dashboard Dark Theme)
+Interfaccia pulita, moderna e intuitiva con supporto drag & drop, ricerca istantanea tra oltre 270 formati, cronologia locale e azioni rapide:
+
+<p align="center">
+  <img src="docs/screenshots/gui-main.png" alt="PeppeZ Easy Converter - Finestra Principale" width="100%">
+</p>
+
+### 🎡 Ruote Radiali Globali (HUD Wheel in Esplora Risorse)
+Trascina qualsiasi file ovunque su Windows e premi un tasto modificatore per far comparire la ruota attorno al cursore:
+
+<table align="center" width="100%">
+  <tr>
+    <th width="50%" align="center"><b>⇧ Maiusc + Trascina: Ruota Conversioni</b></th>
+    <th width="50%" align="center"><b>Ctrl + Trascina: Ruota Strumenti</b></th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/screenshots/hud-convert.png" alt="Ruota Conversioni" width="100%"><br>
+      <i>7 formati preferiti + spicchio <b>ALTRO…</b> per l'elenco completo</i>
+    </td>
+    <td align="center">
+      <img src="docs/screenshots/hud-tools.png" alt="Ruota Strumenti" width="100%"><br>
+      <i>Strumenti veloci: Comprimi con stima MB, Unisci, Dividi, Ruota</i>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## 📖 Indice
 
 1. [Cos'è PeppeZ Easy Converter](#-cosè-peppez-easy-converter)
-2. [Funzionalità Chiave](#-funzionalità-chiave)
+2. [Screenshot dell'Interfaccia](#-screenshot-dellinterfaccia)
+3. [Funzionalità Chiave](#-funzionalità-chiave)
    - [Ruota Radiale Globale (HUD Wheel)](#-ruota-radiale-globale-hud-wheel)
    - [Architettura Intelligente a 7+1 Fette e HUD "ALTRO…"](#-architettura-intelligente-a-71-fette-e-hud-altro)
    - [Pannello Compressione con Stima MB Reale](#-pannello-compressione-con-stima-mb-reale)
@@ -30,13 +62,13 @@
    - [Personalizzazione Totale della Ruota](#-personalizzazione-totale-della-ruota)
    - [Cartelle Monitorate (Watch Folders)](#-cartelle-monitorate-watch-folders)
    - [Motori Modulari Opzionali](#-motori-modulari-opzionali)
-3. [Come si Usa](#-come-si-usa)
-4. [Catalogo dei Motori di Conversione](#-catalogo-dei-motori-di-conversione)
-5. [Download & Installazione](#-download--installazione)
-6. [Architettura Tecnica](#-architettura-tecnica)
-7. [Compilazione dai Sorgenti](#-compilazione-dai-sorgenti)
-8. [Note su Privacy e Sicurezza](#-note-su-privacy-e-sicurezza)
-9. [Licenza](#-licenza)
+4. [Come si Usa](#-come-si-usa)
+5. [Catalogo dei Motori di Conversione](#-catalogo-dei-motori-di-conversione)
+6. [Download & Installazione](#-download--installazione)
+7. [Architettura Tecnica](#-architettura-tecnica)
+8. [Compilazione dai Sorgenti](#-compilazione-dai-sorgenti)
+9. [Note su Privacy e Sicurezza](#-note-su-privacy-e-sicurezza)
+10. [Licenza](#-licenza)
 
 ---
 
