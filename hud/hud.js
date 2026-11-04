@@ -84,6 +84,15 @@
     hud.hold(); wheel.classList.remove('on'); const P = document.getElementById('panel'), B = document.getElementById('pBody'); P.hidden = false;
     P.classList.toggle('panel-more', opt.panel === 'more');
     const name = f => f.split(/[\\/]/).pop(); let q = 75, order = paths.slice(), selectedFmt = null, tmr = null, seq = 0;
+    const okBtn = document.getElementById('pOk');
+    okBtn.disabled = false;
+    if (opt.panel === 'order') {
+      okBtn.textContent = 'Unisci ' + paths.length + ' PDF';
+    } else if (opt.panel === 'quality') {
+      okBtn.textContent = 'Comprimi';
+    } else {
+      okBtn.textContent = 'Avvia';
+    }
     document.getElementById('pTitle').textContent = opt.panel === 'order' ? 'Unisci PDF: ordine dei file' : opt.panel === 'more' ? 'Tutte le conversioni possibili' : 'Comprimi: qualità' + (paths.length > 1 ? ' (' + paths.length + ' file)' : '');
     // dimensione stimata: una prova vera di compressione fatta dal programma (non tocca l'originale), rilanciata poco dopo l'ultima modifica
     const estimate = () => {

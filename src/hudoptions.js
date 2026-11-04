@@ -18,10 +18,11 @@ const PREFERRED = {
 const POPULAR = ['pdf', 'png', 'jpg', 'webp', 'docx', 'txt', 'html', 'md', 'xlsx', 'csv', 'pptx', 'mp4', 'mp3', 'wav', 'zip', 'epub', 'svg', 'json', 'xml', 'odt'];
 const REP = { image: 'jpg', video: 'mp4', audio: 'mp3', pdf: 'pdf', doc: 'docx', archive: 'zip', ebook: 'epub', other: null };
 const TOOLS = {
-  image: [['compress-image', 'Comprimi'], ['half-size', 'Dimezza'], ['grayscale', 'Grigio'], ['remove-background', 'Senza sfondo']],
-  video: [['compress-video', 'Comprimi'], ['extract-audio', 'Estrai audio'], ['extract-frames-jpg', 'Fotogrammi']],
+  image: [['compress-image', 'Comprimi'], ['rotate-right', 'Ruota dx'], ['rotate-left', 'Ruota sx'], ['half-size', 'Dimezza'], ['grayscale', 'Grigio'], ['remove-background', 'Senza sfondo']],
+  video: [['compress-video', 'Comprimi'], ['rotate-right', 'Ruota dx'], ['rotate-left', 'Ruota sx'], ['extract-audio', 'Estrai audio'], ['extract-frames-jpg', 'Fotogrammi']],
   audio: [['compress-audio', 'Comprimi'], ['extract-audio', 'Estrai audio']],
   pdf: [['compress-pdf', 'Comprimi'], ['merge-pdf', 'Unisci'], ['pdf-split', 'Dividi'], ['pdf-rotate-right', 'Ruota dx'], ['pdf-rotate-left', 'Ruota sx'], ['pdf-long-image', 'Immagine lunga']],
+  doc: [['to-pdf', 'Esporta in PDF']],
   archive: [['@folder', 'Estrai']]
 };
 const GROUP_TOOLS = new Set(['merge-pdf']);
@@ -105,10 +106,11 @@ function pickToolIds({ kind, count, custom }) {
   return mine.length ? mine : avail.slice(0, MAX_SLICES);
 }
 const toolOption = (kind, v) => {
-  const label = (TOOLS[kind].find(t => t[0] === v) || [v, v])[1];
-  return v === '@folder'
-    ? { id: 'to:folder', kind: 'to', value: 'folder', label, sub: 'in una cartella' }
-    : { id: 'preset:' + v, kind: 'preset', value: v, label, sub: PANELS[v] ? 'impostazioni' : '', group: GROUP_TOOLS.has(v), panel: PANELS[v] || null };
+  const list = TOOLS[kind] || [];
+  const label = (list.find(t => t[0] === v) || [v, v])[1];
+  if (v === '@folder') return { id: 'to:folder', kind: 'to', value: 'folder', label, sub: 'in una cartella' };
+  if (v === 'to-pdf') return { id: 'to:pdf', kind: 'to', value: 'pdf', label, sub: 'in PDF' };
+  return { id: 'preset:' + v, kind: 'preset', value: v, label, sub: PANELS[v] ? 'impostazioni' : '', group: GROUP_TOOLS.has(v), panel: PANELS[v] || null };
 };
 
 // exts: estensioni dedotte dal tipo MIME dei file in trascinamento (può essere vuoto), count: quanti file
@@ -171,15 +173,48 @@ async function buildOptions({ mode, kind = 'other', exts = [], count = 1, engine
 }
 
 // Opzioni predefinite immediate mostrate all'apertura istantanea della ruota prima del rilevamento MIME
-function defaultWheelOptions(mode) {
+function defaultWheelOptions(mode, kind = 'other') {
   if (mode === 'tools') {
+    if (kind === 'image') {
+      return [
+        { id: 'preset:compress-image', kind: 'preset', value: 'compress-image', label: 'Comprimi', sub: 'impostazioni', panel: 'quality' },
+        { id: 'preset:rotate-right', kind: 'preset', value: 'rotate-right', label: 'Ruota dx', sub: '' },
+        { id: 'preset:rotate-left', kind: 'preset', value: 'rotate-left', label: 'Ruota sx', sub: '' },
+        { id: 'preset:half-size', kind: 'preset', value: 'half-size', label: 'Dimezza', sub: '' },
+        { id: 'preset:grayscale', kind: 'preset', value: 'grayscale', label: 'Grigio', sub: '' },
+        { id: 'preset:remove-background', kind: 'preset', value: 'remove-background', label: 'Senza sfondo', sub: '' }
+      ];
+    }
+    if (kind === 'video') {
+      return [
+        { id: 'preset:compress-video', kind: 'preset', value: 'compress-video', label: 'Comprimi', sub: '' },
+        { id: 'preset:rotate-right', kind: 'preset', value: 'rotate-right', label: 'Ruota dx', sub: '' },
+        { id: 'preset:rotate-left', kind: 'preset', value: 'rotate-left', label: 'Ruota sx', sub: '' },
+        { id: 'preset:extract-audio', kind: 'preset', value: 'extract-audio', label: 'Estrai audio', sub: '' },
+        { id: 'preset:extract-frames-jpg', kind: 'preset', value: 'extract-frames-jpg', label: 'Fotogrammi', sub: '' }
+      ];
+    }
+    if (kind === 'pdf') {
+      return [
+        { id: 'preset:compress-pdf', kind: 'preset', value: 'compress-pdf', label: 'Comprimi', sub: 'impostazioni', panel: 'quality' },
+        { id: 'preset:merge-pdf', kind: 'preset', value: 'merge-pdf', label: 'Unisci', sub: 'impostazioni', panel: 'order' },
+        { id: 'preset:pdf-split', kind: 'preset', value: 'pdf-split', label: 'Dividi', sub: '' },
+        { id: 'preset:pdf-rotate-right', kind: 'preset', value: 'pdf-rotate-right', label: 'Ruota dx', sub: '' },
+        { id: 'preset:pdf-rotate-left', kind: 'preset', value: 'pdf-rotate-left', label: 'Ruota sx', sub: '' },
+        { id: 'preset:pdf-long-image', kind: 'preset', value: 'pdf-long-image', label: 'Immagine lunga', sub: '' }
+      ];
+    }
+    if (kind === 'doc') {
+      return [
+        { id: 'to:pdf', kind: 'to', value: 'pdf', label: 'Esporta in PDF', sub: 'in PDF' }
+      ];
+    }
+    // Per file generici: Comprimi, Ruota dx, Ruota sx, Esporta in PDF
     return [
-      { id: 'preset:compress-pdf', kind: 'preset', value: 'compress-pdf', label: 'Comprimi', sub: 'impostazioni', panel: 'quality' },
-      { id: 'preset:merge-pdf', kind: 'preset', value: 'merge-pdf', label: 'Unisci', sub: 'impostazioni', panel: 'order' },
-      { id: 'preset:pdf-split', kind: 'preset', value: 'pdf-split', label: 'Dividi', sub: '' },
-      { id: 'preset:pdf-rotate-right', kind: 'preset', value: 'pdf-rotate-right', label: 'Ruota dx', sub: '' },
-      { id: 'preset:pdf-rotate-left', kind: 'preset', value: 'pdf-rotate-left', label: 'Ruota sx', sub: '' },
-      { id: 'preset:pdf-long-image', kind: 'preset', value: 'pdf-long-image', label: 'Immagine lunga', sub: '' }
+      { id: 'preset:compress-image', kind: 'preset', value: 'compress-image', label: 'Comprimi', sub: 'impostazioni', panel: 'quality' },
+      { id: 'preset:rotate-right', kind: 'preset', value: 'rotate-right', label: 'Ruota dx', sub: '' },
+      { id: 'preset:rotate-left', kind: 'preset', value: 'rotate-left', label: 'Ruota sx', sub: '' },
+      { id: 'to:pdf', kind: 'to', value: 'pdf', label: 'In PDF', sub: '' }
     ];
   }
   return [

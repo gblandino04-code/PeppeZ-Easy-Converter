@@ -32,7 +32,12 @@ class Estimator {
       if (out == null) {
         out = await this.trial(it.file, { preset, to, quality }, my);
         if (my !== this.seq) return { ok: false, cancelled: true };
-        if (out == null) return { ok: false, error: 'Stima non disponibile' };
+        if (out == null) {
+          // Stima proporzionale istantanea se la prova fallisce o va in timeout per non bloccare mai la UI
+          const qVal = quality != null ? Math.min(100, Math.max(10, +quality || 75)) : 75;
+          const factor = 0.45 + (qVal / 100) * 0.45;
+          out = Math.round(it.size * factor);
+        }
         this.cache.set(key, out); if (this.cache.size > 200) this.cache.delete(this.cache.keys().next().value);
       }
       sIn += it.size; sOut += out;
@@ -52,10 +57,16 @@ class Estimator {
           const testOut = path.join(dir, 'test.pdf');
           const child = cp.spawn(gs, getGhostscriptPdfArgs(file, testOut, quality), { windowsHide: true, stdio: 'ignore' });
           this.current = child;
+          let timer = null;
           const code = await new Promise(res => {
-            child.on('error', () => res(-1));
-            child.on('close', c => res(c));
+            timer = setTimeout(() => {
+              try { child.kill(); } catch { }
+              res(-1);
+            }, 5000);
+            child.on('error', () => { clearTimeout(timer); res(-1); });
+            child.on('close', c => { clearTimeout(timer); res(c); });
           });
+          clearTimeout(timer);
           if (this.current === child) this.current = null;
           if (my !== this.seq) return null;
           if (code === 0 && fs.existsSync(testOut)) {
@@ -66,7 +77,7 @@ class Estimator {
       }
       const args = ['convert', file, preset ? '--preset' : '--to', preset || to, '-o', dir, '--overwrite', '--json'];
       if (quality != null) args.push('-q', String(Math.min(100, Math.max(1, Math.round(+quality || 75)))));
-      const h = this.engine.run(args, { timeout: TIMEOUT }); this.current = h;
+      const h = this.engine.run(args, { timeout: 8000 }); this.current = h;
       const r = await h.promise; if (this.current === h) this.current = null;
       if (my !== this.seq || r.code === -2) return null;
       let outs = [];

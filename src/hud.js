@@ -111,10 +111,27 @@ class Hud {
   }
   finishDrop(res) {
     const bad = res.filter(j => j.status !== 'done' && j.status !== 'skipped'), ok = res.length - bad.length;
-    const text = bad.length ? (bad[0].error || 'Conversione non riuscita') : res.length > 1 ? ok + ' file convertiti' : path.basename((res[0].outputs || [])[0] || res[0].name);
+    let text = '';
+    if (bad.length) {
+      text = bad[0].error || 'Operazione non riuscita';
+    } else {
+      const isMerge = res.some(j => j.preset === 'merge-pdf');
+      const isCompress = res.some(j => (j.preset || '').includes('compress'));
+      if (isMerge) {
+        text = 'PDF uniti con successo';
+      } else if (isCompress) {
+        text = res.length > 1 ? ok + ' file compressi' : 'Compressione completata';
+      } else if (res.length > 1) {
+        text = ok + ' file convertiti';
+      } else {
+        text = path.basename((res[0].outputs || [])[0] || res[0].name);
+      }
+    }
     if (this.settings.get().hudShowResult) this.result(bad.length ? 'failed' : 'done', text);
     else this.hide();
-    if (bad.length && this.Notification && this.Notification.isSupported()) new this.Notification({ title: 'PeppeZ Easy Converter', body: text }).show();
+    if (this.Notification && this.Notification.isSupported()) {
+      new this.Notification({ title: 'PeppeZ Easy Converter', body: text }).show();
+    }
   }
   result(status, text) {
     this.pending = true;

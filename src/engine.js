@@ -32,10 +32,11 @@ function getGhostscriptPdfArgs(inputFile, outputFile, quality) {
     dpi = Math.max(50, Math.round(50 + (q / 50) * 35));
   } else if (q <= 75) {
     setting = '/ebook';
-    dpi = Math.round(90 + ((q - 50) / 25) * 60);
+    dpi = Math.round(90 + ((q - 50) / 25) * 50);
   } else {
-    setting = '/printer';
-    dpi = Math.round(150 + ((q - 75) / 25) * 150);
+    // Per compressione leggera usiamo /ebook con risoluzione superiore, mai /printer (che blocca e aumenta il peso)
+    setting = '/ebook';
+    dpi = Math.round(140 + ((q - 75) / 25) * 35);
   }
   return [
     '-sDEVICE=pdfwrite',
