@@ -82,7 +82,7 @@ class Hud {
     // le fette si riempiono appena Windows dice che tipo di file si sta trascinando; se non lo dice entro poco, propongo l'elenco generico
     this.win.webContents.send('hud:show', { mode, cx: SIZE / 2, cy: SIZE / 2, options: null });
     this.win.showInactive(); this.win.setAlwaysOnTop(true, 'screen-saver');
-    this.kindsTimer = setTimeout(() => { if (this.visible && !this.gotKinds) this.sendOptions(); }, 700);
+    this.kindsTimer = setTimeout(() => { if (this.visible && !this.gotKinds) this.sendOptions(); }, 350);
   }
   async switchMode(mode) { if (!this.visible || mode === this.mode) return; this.mode = mode; await this.sendOptions(); }
   flip(dir) { if (this.visible && this.win) this.win.webContents.send('hud:flip', dir); }

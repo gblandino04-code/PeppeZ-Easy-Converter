@@ -10,7 +10,7 @@ while (($l = [Console]::In.ReadLine()) -ne $null) {
   $h = [PZ.W]::GetForegroundWindow(); $p = 0; [void][PZ.W]::GetWindowThreadProcessId($h, [ref]$p)
   try { [Console]::Out.WriteLine((Get-Process -Id $p -ErrorAction Stop).ProcessName) } catch { [Console]::Out.WriteLine('?') }
 }`;
-const FILE_MANAGERS = ['explorer', 'totalcmd', 'totalcmd64', 'doublecmd', 'q-dir', 'xyplorer', 'onecommander', 'files', 'fpilot', 'directoryopus', 'dopus'];
+const FILE_MANAGERS = ['explorer', 'totalcmd', 'totalcmd64', 'doublecmd', 'q-dir', 'xyplorer', 'onecommander', 'files', 'fpilot', 'directoryopus', 'dopus', 'progman', 'workerw'];
 
 class Foreground {
   constructor() { this.ps = null; this.queue = []; this.ready = false; this.buf = ''; }

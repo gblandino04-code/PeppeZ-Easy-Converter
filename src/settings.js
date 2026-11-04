@@ -10,7 +10,7 @@ const DEFAULTS = {
   quality: 90,                // qualità immagini
   keepDates: false,
   hudEnabled: true,           // ruota Shift+trascina
-  hudOnlyExplorer: true,      // mostra la ruota solo trascinando da Esplora risorse
+  hudOnlyExplorer: false,     // mostra la ruota trascinando ovunque (Desktop, Esplora risorse, browser, ecc.)
   hudShowResult: true,        // mostra l'esito nella ruota
   openAtLogin: false,
   closeToTray: true,

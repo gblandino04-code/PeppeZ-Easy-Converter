@@ -41,6 +41,7 @@ function boot() {
 
   const foreground = new Foreground();
   hud = new Hud({ BrowserWindow, screen, ipcMain, Notification, engine, queue, settings, root: __dirname });
+  hud.create(); // Pre-carica la finestra HUD trasparente in memoria per apertura istantanea a latenza zero
   function startHooks() { foreground.start(); hook = startHook({ hud, foreground, settings }); send('hook', { ok: hook.ok }); }
 
   function showMain() { if (!win || win.isDestroyed()) createWindow(); if (win.isMinimized()) win.restore(); win.show(); win.focus(); }
