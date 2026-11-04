@@ -170,8 +170,32 @@ async function buildOptions({ mode, kind = 'other', exts = [], count = 1, engine
   return ids.map(id => ({ id: 'to:' + id, kind: 'to', value: id, label: String(byId.get(id).name).toUpperCase(), sub: '' }));
 }
 
+// Opzioni predefinite immediate mostrate all'apertura istantanea della ruota prima del rilevamento MIME
+function defaultWheelOptions(mode) {
+  if (mode === 'tools') {
+    return [
+      { id: 'preset:compress-pdf', kind: 'preset', value: 'compress-pdf', label: 'Comprimi', sub: 'impostazioni', panel: 'quality' },
+      { id: 'preset:merge-pdf', kind: 'preset', value: 'merge-pdf', label: 'Unisci', sub: 'impostazioni', panel: 'order' },
+      { id: 'preset:pdf-split', kind: 'preset', value: 'pdf-split', label: 'Dividi', sub: '' },
+      { id: 'preset:pdf-rotate-right', kind: 'preset', value: 'pdf-rotate-right', label: 'Ruota dx', sub: '' },
+      { id: 'preset:pdf-rotate-left', kind: 'preset', value: 'pdf-rotate-left', label: 'Ruota sx', sub: '' },
+      { id: 'preset:pdf-long-image', kind: 'preset', value: 'pdf-long-image', label: 'Immagine lunga', sub: '' }
+    ];
+  }
+  return [
+    { id: 'to:png', kind: 'to', value: 'png', label: 'PNG', sub: '' },
+    { id: 'to:jpg', kind: 'to', value: 'jpg', label: 'JPG', sub: '' },
+    { id: 'to:webp', kind: 'to', value: 'webp', label: 'WEBP', sub: '' },
+    { id: 'to:pdf', kind: 'to', value: 'pdf', label: 'PDF', sub: '' },
+    { id: 'to:avif', kind: 'to', value: 'avif', label: 'AVIF', sub: '' },
+    { id: 'to:tiff', kind: 'to', value: 'tiff', label: 'TIFF', sub: '' },
+    { id: 'to:ico', kind: 'to', value: 'ico', label: 'ICO', sub: '' },
+    { id: 'more:formats', kind: 'more', value: 'more', label: 'ALTRO…', sub: 'tutti i formati', panel: 'more' }
+  ];
+}
+
 module.exports = {
   MAX_SLICES, PREFERRED, TOOLS, PANELS, REP, GROUP_TOOLS,
-  buildOptions, kindFromMime, kindFromCategory, pickKind, extFromMime, formatOfExt,
+  buildOptions, defaultWheelOptions, kindFromMime, kindFromCategory, pickKind, extFromMime, formatOfExt,
   possibleTargets, rankTargets, pickConvertIds, pickToolIds, toolsAvailable
 };

@@ -29,7 +29,7 @@
   }
   function indexAt(x, y) {
     const dx = x - st.cx, dy = y - st.cy, d = Math.hypot(dx, dy), n = pageItems().length;
-    if (!n || d < r - 4 || d > R + 14) return -1;
+    if (!n || d < r - 15 || d > R + 35) return -1;
     const step = Math.PI * 2 / n; let a = Math.atan2(dy, dx) + Math.PI / 2 + step / 2; a = ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
     return Math.floor(a / step) % n;
   }
@@ -61,8 +61,29 @@
   document.addEventListener('dragleave', e => { if (!e.relatedTarget) setHover(-1); });
   document.addEventListener('drop', e => {
     e.preventDefault(); e.stopPropagation();
-    const i = indexAt(e.clientX, e.clientY), paths = [...e.dataTransfer.files].map(f => hud.pathOf(f)).filter(Boolean);
-    if (i < 0 || !paths.length || st.busy) { hud.close(); return; }
+    const paths = [...e.dataTransfer.files].map(f => hud.pathOf(f)).filter(Boolean);
+    if (!paths.length || st.busy) { hud.close(); return; }
+    let i = indexAt(e.clientX, e.clientY);
+    if (i < 0 && st.hover >= 0) i = st.hover;
+    if (i < 0) {
+      if (st.mode === 'convert') {
+        const moreOpt = pageItems().find(o => o.kind === 'more') || pageItems()[0];
+        if (moreOpt) {
+          if (moreOpt.panel === 'more') openPanel(moreOpt, paths);
+          else startDrop(paths, moreOpt, {});
+          return;
+        }
+      } else {
+        const first = pageItems()[0];
+        if (first) {
+          if (first.panel) openPanel(first, paths);
+          else startDrop(paths, first, {});
+          return;
+        }
+      }
+      hud.close();
+      return;
+    }
     const opt = pageItems()[i];
     if (opt.panel && !(opt.panel === 'order' && paths.length < 2)) { openPanel(opt, paths); return; }
     startDrop(paths, opt, {});

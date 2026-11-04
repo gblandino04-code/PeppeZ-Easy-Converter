@@ -1,29 +1,19 @@
 // Gestione della ruota: finestra trasparente sempre in primo piano che compare sotto il cursore durante un trascinamento.
 const path = require('path');
-const { buildOptions, kindFromMime, extFromMime, pickKind } = require('./hudoptions');
+const { buildOptions, defaultWheelOptions, kindFromMime, extFromMime, pickKind } = require('./hudoptions');
 const { Estimator } = require('./estimate');
 
-const SIZE = 460;
-const WHEEL_MARGIN = 194; // raggio della ruota (176) + alone e zona di rilascio: tutto questo deve restare dentro lo schermo
+const SIZE = 480;
 
-// Dove mettere la ruota: centrata sul cursore, ma spostata quanto serve perché l'intera finestra resti dentro l'area utile dello schermo
-// (vicino a un bordo si sposta verso l'interno; se il file è sul bordo superiore, sposta il cerchio appena più in basso per renderlo comodo).
+// Dove mettere la ruota: centrata perfettamente sul cursore, contenuta nell'area utile dello schermo
 function placeWheel(p, area, size = SIZE) {
-  let cx = Math.round(p.x), cy = Math.round(p.y);
-  // Se il cursore è vicino ai bordi, sposta il centro verso l'interno
-  if (cy < area.y + 120) cy = area.y + 120;
-  if (cy > area.y + area.height - 120) cy = area.y + area.height - 120;
-  if (cx < area.x + 120) cx = area.x + 120;
-  if (cx > area.x + area.width - 120) cx = area.x + area.width - 120;
-
-  let x = Math.round(cx - size / 2);
-  let y = Math.round(cy - size / 2);
-
-  // La finestra intera (460x460) deve sempre restare dentro l'area utile
+  let x = Math.round(p.x - size / 2);
+  let y = Math.round(p.y - size / 2);
   x = Math.max(area.x, Math.min(area.x + area.width - size, x));
   y = Math.max(area.y, Math.min(area.y + area.height - size, y));
-
-  return { x, y, width: size, height: size, cx, cy, moved: cx !== Math.round(p.x) || cy !== Math.round(p.y) };
+  let cx = Math.max(70, Math.min(size - 70, Math.round(p.x - x)));
+  let cy = Math.max(70, Math.min(size - 70, Math.round(p.y - y)));
+  return { x, y, width: size, height: size, cx, cy };
 }
 
 class Hud {
@@ -79,10 +69,11 @@ class Hud {
     const p = this.screen.getCursorScreenPoint(), d = this.screen.getDisplayNearestPoint(p).workArea, w = placeWheel(p, d);
     this.win.setBounds({ x: w.x, y: w.y, width: SIZE, height: SIZE });
     this.visible = true; this.pending = null;
-    // le fette si riempiono appena Windows dice che tipo di file si sta trascinando; se non lo dice entro poco, propongo l'elenco generico
-    this.win.webContents.send('hud:show', { mode, cx: SIZE / 2, cy: SIZE / 2, options: null });
+    // Opzioni predefinite immediate per mostrare subito le fette senza alcun ritardo
+    const initialOptions = defaultWheelOptions(mode);
+    this.win.webContents.send('hud:show', { mode, cx: w.cx, cy: w.cy, options: initialOptions });
     this.win.showInactive(); this.win.setAlwaysOnTop(true, 'screen-saver');
-    this.kindsTimer = setTimeout(() => { if (this.visible && !this.gotKinds) this.sendOptions(); }, 350);
+    this.kindsTimer = setTimeout(() => { if (this.visible && !this.gotKinds) this.sendOptions(); }, 300);
   }
   async switchMode(mode) { if (!this.visible || mode === this.mode) return; this.mode = mode; await this.sendOptions(); }
   flip(dir) { if (this.visible && this.win) this.win.webContents.send('hud:flip', dir); }
