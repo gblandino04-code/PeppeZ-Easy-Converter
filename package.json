@@ -1,7 +1,7 @@
 {
   "name": "peppez-convert",
   "productName": "PeppeZ Easy Converter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PeppeZ Easy Converter - conversione file offline con ruota Shift+trascina.",
   "main": "main.js",
   "author": "PeppeZ",
