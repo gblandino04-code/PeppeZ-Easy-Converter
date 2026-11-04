@@ -3,17 +3,20 @@ const path = require('path');
 const { buildOptions, defaultWheelOptions, kindFromMime, extFromMime, pickKind } = require('./hudoptions');
 const { Estimator } = require('./estimate');
 
-const SIZE = 480;
+const SIZE = 460;
 
 // Dove mettere la ruota: centrata perfettamente sul cursore, contenuta nell'area utile dello schermo
 function placeWheel(p, area, size = SIZE) {
-  let x = Math.round(p.x - size / 2);
-  let y = Math.round(p.y - size / 2);
-  x = Math.max(area.x, Math.min(area.x + area.width - size, x));
-  y = Math.max(area.y, Math.min(area.y + area.height - size, y));
-  let cx = Math.max(70, Math.min(size - 70, Math.round(p.x - x)));
-  let cy = Math.max(70, Math.min(size - 70, Math.round(p.y - y)));
-  return { x, y, width: size, height: size, cx, cy };
+  let cx = Math.round(p.x), cy = Math.round(p.y);
+  const half = Math.round(size / 2);
+  if (cx < area.x + half) cx = area.x + half;
+  if (cx > area.x + area.width - half) cx = area.x + area.width - half;
+  if (cy < area.y + half) cy = area.y + half;
+  if (cy > area.y + area.height - half) cy = area.y + area.height - half;
+
+  let x = Math.round(cx - half);
+  let y = Math.round(cy - half);
+  return { x, y, width: size, height: size, cx: half, cy: half };
 }
 
 class Hud {
