@@ -25,3 +25,8 @@
   Sleep 1000
 !macroend
 
+!macro customUnInstallCheck
+  ; Non bloccare e non mostrare mai popup di errore se il vecchio uninstaller fallisce o lascia file temporanei
+  DetailPrint "Continuo con l'installazione sovrascrivendo i componenti..."
+!macroend
+
