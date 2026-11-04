@@ -1,5 +1,5 @@
-// Rilevamento globale di Maiusc/Ctrl + trascinamento (libreria uiohook-napi).
-// Supporta sia tocco/pressione di Shift o Ctrl durante il trascinamento, sia pressione preventiva prima del clic.
+// Rilevamento globale di trascinamento file + tasti configurabili (libreria uiohook-napi).
+// Supporta sia tocco/pressione del tasto scelto durante il trascinamento, sia pressione preventiva prima del clic.
 // Include protezione attiva: non si attiva MAI nei giochi o applicazioni a schermo intero.
 const THRESHOLD = 2; // soglia minima di 2 pixel: massima reattività e apertura istantanea
 
@@ -15,11 +15,40 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
   const K = {
     shift: [Key.Shift, Key.ShiftRight],
     ctrl: [Key.Ctrl, Key.CtrlRight],
-    esc: Key.Escape,
-    tab: Key.Tab
+    alt: [Key.Alt, Key.AltRight],
+    space: [Key.Space],
+    c: [Key.C],
+    x: [Key.X],
+    z: [Key.Z],
+    q: [Key.Q],
+    e: [Key.E],
+    f: [Key.F],
+    v: [Key.V],
+    tab: [Key.Tab],
+    capslock: [Key.CapsLock],
+    esc: Key.Escape
   };
 
-  let shift = false, ctrl = false, down = false, dx = 0, dy = 0, dragging = false, cancelled = false;
+  const getConvKey = () => (settings.get().keybindConvert || 'shift').toLowerCase();
+  const getToolsKey = () => (settings.get().keybindTools || 'ctrl').toLowerCase();
+
+  const matchesKey = (code, keyName) => {
+    const list = K[keyName] || K.shift;
+    return Array.isArray(list) ? list.includes(code) : list === code;
+  };
+
+  const pressedKeys = new Set();
+
+  const isKeyActive = (keyName, mouseEvent) => {
+    if (keyName === 'shift' && mouseEvent && mouseEvent.shiftKey) return true;
+    if (keyName === 'ctrl' && mouseEvent && mouseEvent.ctrlKey) return true;
+    if (keyName === 'alt' && mouseEvent && mouseEvent.altKey) return true;
+    const list = K[keyName];
+    if (!list) return false;
+    return Array.isArray(list) ? list.some(k => pressedKeys.has(k)) : pressedKeys.has(list);
+  };
+
+  let down = false, dx = 0, dy = 0, dragging = false, cancelled = false;
   let requestedMode = null;
 
   const enabled = () => settings.get().hudEnabled;
@@ -47,36 +76,39 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
 
   uio.on('keydown', e => {
     const c = e.keycode;
-    const isShift = K.shift.includes(c);
-    const isCtrl = K.ctrl.includes(c);
+    pressedKeys.add(c);
 
-    if (isShift) shift = true;
-    else if (isCtrl) ctrl = true;
-    else if (c === K.esc && hud.visible) {
+    const convKey = getConvKey();
+    const toolsKey = getToolsKey();
+    const isConv = matchesKey(c, convKey);
+    const isTools = matchesKey(c, toolsKey);
+
+    if (c === K.esc && hud.visible) {
       cancelled = true;
       requestedMode = null;
       hud.hide();
       return;
-    } else if (c === K.tab && hud.visible) {
+    }
+    if (c === Key.Tab && hud.visible && convKey !== 'tab' && toolsKey !== 'tab') {
       if (!hud.panelOpen) hud.flip(1);
-      return;
-    } else {
       return;
     }
 
-    // Protezione giochi: se e attivo un gioco, ignora la combinazione
+    if (!isConv && !isTools) return;
+
+    // Protezione giochi: se è attivo un gioco, ignora la combinazione
     if (!isAllowed()) return;
 
-    const targetMode = isCtrl ? 'tools' : 'convert';
+    const targetMode = isTools ? 'tools' : 'convert';
 
-    // Se la ruota e gia aperta, cambia modalita al volo (Maiusc <-> Ctrl)
+    // Se la ruota è già aperta, cambia modalità al volo (es. Conversioni <-> Strumenti)
     if (hud.visible && !hud.panelOpen) {
       requestedMode = targetMode;
       hud.switchMode(targetMode);
       return;
     }
 
-    // Se il tasto sinistro del mouse e premuto: apri subito la ruota
+    // Se il tasto sinistro del mouse è premuto: apri subito la ruota
     if (down) {
       cancelled = false;
       dragging = true;
@@ -86,11 +118,9 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
   });
 
   uio.on('keyup', e => {
-    const c = e.keycode;
-    if (K.shift.includes(c)) shift = false;
-    else if (K.ctrl.includes(c)) ctrl = false;
-    // Nota: non chiudiamo la ruota quando rilasci Shift o Ctrl.
-    // Basta un tocco: la ruota resta aperta durante il trascinamento finche non rilasci il mouse o premi Esc.
+    pressedKeys.delete(e.keycode);
+    // Nota: non chiudiamo la ruota quando rilasci il tasto.
+    // Basta un tocco: la ruota resta aperta durante il trascinamento finché non rilasci il mouse o premi Esc.
   });
 
   uio.on('mousedown', e => {
@@ -103,12 +133,15 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
     dx = e.x;
     dy = e.y;
 
-    // Se Shift o Ctrl erano gia premuti prima di iniziare a trascinare:
-    const activeCtrl = e.ctrlKey || ctrl;
-    const activeShift = e.shiftKey || shift;
-    if (activeCtrl) {
+    // Se il tasto configurato era già premuto prima di iniziare a trascinare:
+    const convKey = getConvKey();
+    const toolsKey = getToolsKey();
+    const activeTools = isKeyActive(toolsKey, e);
+    const activeConv = isKeyActive(convKey, e);
+
+    if (activeTools) {
       requestedMode = 'tools';
-    } else if (activeShift) {
+    } else if (activeConv) {
       requestedMode = 'convert';
     } else {
       requestedMode = null;
@@ -118,7 +151,7 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
   uio.on('mousemove', e => {
     if (!down || hud.panelOpen || cancelled) return;
 
-    // Se l'utente e passato a un gioco, chiudi subito la ruota
+    // Se l'utente è passato a un gioco, chiudi subito la ruota
     if (isGame()) {
       if (hud.visible) hud.hide();
       return;
@@ -130,9 +163,11 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
     }
 
     if (dragging) {
-      const activeCtrl = e.ctrlKey || ctrl;
-      const activeShift = e.shiftKey || shift;
-      const m = activeCtrl ? 'tools' : activeShift ? 'convert' : requestedMode;
+      const convKey = getConvKey();
+      const toolsKey = getToolsKey();
+      const activeTools = isKeyActive(toolsKey, e);
+      const activeConv = isKeyActive(convKey, e);
+      const m = activeTools ? 'tools' : activeConv ? 'convert' : requestedMode;
 
       if (m && !hud.visible) {
         requestedMode = m;
@@ -146,8 +181,7 @@ function startHook({ hud, foreground, settings, log = console.warn }) {
     down = false;
     dragging = false;
     requestedMode = null;
-    shift = false;
-    ctrl = false;
+    pressedKeys.clear();
     if (hud.visible && !hud.panelOpen) {
       hud.released();
     }

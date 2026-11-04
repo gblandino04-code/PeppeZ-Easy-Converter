@@ -1,7 +1,7 @@
 /* PeppeZ Convert — dashboard (tema scuro dello screen, tema chiaro opzionale) */
 :root{--bg:#090d16;--side:#0b0f19;--panel:#0f1522;--card:#121827;--card2:#172033;--line:#1a2236;--line2:#232c42;--text:#eaf0fd;--muted:#8d99b6;--blue:#1d6bf0;--blue2:#3a8bff;--green:#35d08b;--red:#ff5d6c;--amber:#ffb23e;--r:12px;--ico-filter:none;
   --font:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif}
-[data-theme=light]{--bg:#edf1f8;--panel:#fff;--card:#f3f6fc;--card2:#eaeff9;--line:#dce3f0;--line2:#cfd8ea;--text:#111a30;--muted:#5b6885;--ico-filter:invert(1) brightness(.35)}
+[data-theme=light]{--bg:#f3f6fb;--side:#e8eef8;--panel:#fff;--card:#f8faff;--card2:#edf3fc;--line:#d8e2f0;--line2:#cad6e7;--text:#111a30;--muted:#5b6885;--ico-filter:invert(1) brightness(.35)}
 *{box-sizing:border-box}html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.35 var(--font);display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
 img{-webkit-user-drag:none;user-select:none}button{font:inherit;color:inherit;cursor:pointer}
@@ -192,3 +192,44 @@ input[type=text],input:not([type]),select,.inl input{height:38px;padding:0 12px;
 .m-ex-flow{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--text);margin-bottom:4px}
 .m-ex-flow span{color:var(--blue2)}
 .m-ex-card small{display:block;color:var(--muted);font-size:12px}
+
+/* Stili specifici per Tema Chiaro completo e coerente */
+[data-theme=light] .side{background:var(--side);border-right-color:var(--line)}
+[data-theme=light] .brand b{color:var(--text)}
+[data-theme=light] .brand small{color:var(--muted)}
+[data-theme=light] .brand{border-bottom-color:var(--line2)}
+[data-theme=light] #nav button{color:#2b3956}
+[data-theme=light] #nav button:hover{background:rgba(0,0,0,.05)}
+[data-theme=light] #nav button.on{color:#fff;background:linear-gradient(180deg,#2677ff,#1459dc);box-shadow:0 4px 14px rgba(25,95,230,.28)}
+[data-theme=light] #nav button:not(.on) img{filter:invert(1) brightness(.35);opacity:.85}
+[data-theme=light] #nav button.on img{filter:none}
+[data-theme=light] #nav .sep{background:var(--line2)}
+[data-theme=light] .local{background:#fff;border-color:var(--line);box-shadow:0 2px 8px rgba(0,0,0,.03)}
+[data-theme=light] .local b{color:var(--text)}
+[data-theme=light] .local span{color:var(--muted)}
+[data-theme=light] .titlebar{background:var(--side);border-bottom-color:var(--line);color:var(--text)}
+[data-theme=light] .drop{
+  background:radial-gradient(120% 140% at 85% 20%,rgba(104,64,210,.08),transparent 62%),radial-gradient(90% 120% at 10% 90%,rgba(20,80,200,.08),transparent 60%),#fff;
+  border:1px solid var(--line);
+  box-shadow:0 4px 20px rgba(18,38,77,.04)
+}
+[data-theme=light] .drop:hover,[data-theme=light] .drop.over{box-shadow:0 0 0 4px rgba(47,124,246,.15),0 16px 45px rgba(30,90,220,.12)}
+[data-theme=light] .drop h2{color:var(--text)}
+[data-theme=light] .drop p{color:#4a5b7d}
+[data-theme=light] .drop a{color:var(--blue)}
+[data-theme=light] .chips button{background:#f0f4fc;border:1px solid #ccd8ea;color:#243452}
+[data-theme=light] .chips button:hover{background:#e2edfb;border-color:var(--blue2);color:#0c182e}
+[data-theme=light] .banner{background:#fff8e8;color:#855302;border-bottom-color:#fedb96}
+[data-theme=light] .banner .btn{background:#fff;border-color:#f0c56c;color:#855302}
+[data-theme=light] .banner .btn:hover{background:#fef0d2}
+[data-theme=light] .foot{background:var(--side);border-top-color:var(--line);color:var(--muted)}
+[data-theme=light] .foot img:not(.logo){filter:var(--ico-filter);opacity:.85}
+[data-theme=light] .core-card{background:radial-gradient(ellipse at 15% 20%,rgba(38,119,255,.07),transparent 60%),#fff;border-color:#a3c4f7;box-shadow:0 4px 20px rgba(0,0,0,.04)}
+[data-theme=light] .eng-tag{background:#eef4fd;border-color:#cadcf7;color:#165bca}
+[data-theme=light] .modal{background:rgba(15,23,42,.45)}
+[data-theme=light] .mc{background:#fff;border-color:var(--line2);box-shadow:0 25px 70px rgba(15,23,42,.15)}
+[data-theme=light] .toast{background:#fff;border-color:var(--line2);box-shadow:0 10px 30px rgba(10,30,60,.12);color:var(--text)}
+[data-theme=light] .dropveil{background:rgba(240,244,252,.92);color:var(--text)}
+[data-theme=light] ::-webkit-scrollbar-thumb{background:#c3cfdf}
+[data-theme=light] ::-webkit-scrollbar-thumb:hover{background:#aab8cc}
+

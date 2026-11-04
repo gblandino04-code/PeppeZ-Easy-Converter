@@ -33,6 +33,7 @@ function boot() {
     applySettings(s) {
       if (app.isPackaged) app.setLoginItemSettings({ openAtLogin: !!s.openAtLogin, args: ['--hidden'] });
       if (s.hudEnabled && !hook.ok) startHooks(); 
+      updateThemeOverlay(s.theme);
       updateTray();
     }
   };
@@ -43,11 +44,31 @@ function boot() {
   hud = new Hud({ BrowserWindow, screen, ipcMain, Notification, engine, queue, settings, root: __dirname });
   function startHooks() { foreground.start(); hook = startHook({ hud, foreground, settings }); send('hook', { ok: hook.ok }); }
 
+  function updateThemeOverlay(theme) {
+    if (!win || win.isDestroyed()) return;
+    try {
+      const isLight = theme === 'light';
+      win.setTitleBarOverlay({
+        color: isLight ? '#edf2fa' : '#0b0f19',
+        symbolColor: isLight ? '#111a30' : '#c9d3e6',
+        height: 40
+      });
+    } catch { }
+  }
+
   function showMain() { if (!win || win.isDestroyed()) createWindow(); if (win.isMinimized()) win.restore(); win.show(); win.focus(); }
   function createWindow(hidden) {
+    const isLight = settings.get().theme === 'light';
     win = new BrowserWindow({
-      width: 1280, height: 800, minWidth: 980, minHeight: 640, show: false, backgroundColor: '#0b0f19', title: 'PeppeZ Easy Converter', icon: icon(),
-      titleBarStyle: 'hidden', titleBarOverlay: { color: '#0b0f19', symbolColor: '#c9d3e6', height: 40 },
+      width: 1280, height: 800, minWidth: 980, minHeight: 640, show: false,
+      backgroundColor: isLight ? '#edf2fa' : '#0b0f19',
+      title: 'PeppeZ Easy Converter', icon: icon(),
+      titleBarStyle: 'hidden',
+      titleBarOverlay: {
+        color: isLight ? '#edf2fa' : '#0b0f19',
+        symbolColor: isLight ? '#111a30' : '#c9d3e6',
+        height: 40
+      },
       webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: false, spellcheck: false }
     });
     win.setMenu(null); win.loadFile(path.join(__dirname, 'app', 'index.html'));
@@ -61,7 +82,7 @@ function boot() {
     const s = settings.get();
     tray.setContextMenu(Menu.buildFromTemplate([
       { label: 'Apri PeppeZ Easy Converter', click: showMain },
-      { label: 'Ruota Maiusc + trascina', type: 'checkbox', checked: !!s.hudEnabled, click: m => { settings.set({ hudEnabled: m.checked }); send('settings', settings.get()); } },
+      { label: 'Ruota radiale al trascinamento', type: 'checkbox', checked: !!s.hudEnabled, click: m => { settings.set({ hudEnabled: m.checked }); send('settings', settings.get()); } },
       { type: 'separator' }, { label: 'Esci', click: () => { quitting = true; app.quit(); } }
     ]));
   }
@@ -79,5 +100,6 @@ function boot() {
   app.on('before-quit', () => { quitting = true; try { engine.stopAll(); } catch { } try { hook.stop && hook.stop(); } catch { } try { foreground.stop(); } catch { } });
   app.on('window-all-closed', () => { if (!tray) app.quit(); });
 }
+
 
 boot();

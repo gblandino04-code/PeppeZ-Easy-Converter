@@ -24,8 +24,43 @@
   $$('#nav button').forEach(b => b.onclick = () => go(b.dataset.page));
   $$('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); go(a.dataset.go); });
   $('#btnGear').onclick = () => go('settings');
-  const applyTheme = () => document.documentElement.dataset.theme = S.settings.theme === 'light' ? 'light' : 'dark';
-  $('#btnTheme').onclick = async () => { S.settings = await call('setSettings', { theme: S.settings.theme === 'light' ? 'dark' : 'light' }); applyTheme(); };
+  const KEY_NAMES = {
+    shift: 'Maiusc',
+    ctrl: 'Ctrl',
+    alt: 'Alt',
+    space: 'Spazio',
+    c: 'C',
+    x: 'X',
+    z: 'Z',
+    q: 'Q',
+    e: 'E',
+    f: 'F',
+    v: 'V',
+    tab: 'Tab',
+    capslock: 'Bloc Maiusc'
+  };
+  const keyLabel = k => KEY_NAMES[(k || '').toLowerCase()] || (k || '').toUpperCase();
+
+  const updateKeyLabels = () => {
+    const conv = keyLabel(S.settings.keybindConvert || 'shift');
+    const tools = keyLabel(S.settings.keybindTools || 'ctrl');
+    const tip = $('#qaTip');
+    if (tip) tip.innerHTML = `Suggerimento: tocca <kbd>${conv}</kbd> per conversioni o <kbd>${tools}</kbd> per strumenti mentre trascini`;
+  };
+
+  const applyTheme = () => {
+    const isLight = S.settings.theme === 'light';
+    document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+    const btn = $('#btnTheme');
+    if (btn) btn.title = isLight ? 'Passa al tema scuro' : 'Passa al tema chiaro';
+    updateKeyLabels();
+  };
+  $('#btnTheme').onclick = async () => {
+    const next = S.settings.theme === 'light' ? 'dark' : 'light';
+    S.settings.theme = next;
+    applyTheme(); // istantaneo, zero lag
+    S.settings = await call('setSettings', { theme: next });
+  };
 
   /* ---------- panoramica ---------- */
   function drawHome() {
@@ -564,18 +599,43 @@
   function drawSettings() {
     const s = S.settings, box = $('#sForm');
     const sw = (k, label, hint) => `<div class="srow"><div><b>${label}</b><small>${hint || ''}</small></div><input type="checkbox" data-k="${k}" ${s[k] ? 'checked' : ''}></div>`;
+    const KEY_OPTIONS = [
+      { v: 'shift', l: 'Maiusc (Shift)' },
+      { v: 'ctrl', l: 'Ctrl' },
+      { v: 'alt', l: 'Alt' },
+      { v: 'space', l: 'Barra Spaziatrice (Spazio)' },
+      { v: 'c', l: 'Tasto C' },
+      { v: 'x', l: 'Tasto X' },
+      { v: 'z', l: 'Tasto Z' },
+      { v: 'q', l: 'Tasto Q' },
+      { v: 'e', l: 'Tasto E' },
+      { v: 'f', l: 'Tasto F' },
+      { v: 'v', l: 'Tasto V' },
+      { v: 'tab', l: 'Tabulatore (Tab)' },
+      { v: 'capslock', l: 'Bloc Maiusc' }
+    ];
     box.innerHTML = `
       <div class="srow"><div><b>Tema</b><small>Aspetto dell'applicazione</small></div><select data-k="theme"><option value="dark" ${s.theme !== 'light' ? 'selected' : ''}>Scuro</option><option value="light" ${s.theme === 'light' ? 'selected' : ''}>Chiaro</option></select></div>
       <div class="srow"><div><b>Dove salvare i file convertiti</b><small>${s.outputMode === 'folder' && s.outputDir ? esc(s.outputDir) : 'Accanto al file originale (l\'originale non viene mai modificato)'}</small></div><select data-k="outputMode"><option value="source" ${s.outputMode !== 'folder' ? 'selected' : ''}>Accanto all'originale</option><option value="folder" ${s.outputMode === 'folder' ? 'selected' : ''}>In una cartella</option></select><button class="btn" id="sDir">Cartella…</button></div>
       <div class="srow"><div><b>Se il file esiste già</b><small>Cosa fare quando il nome è occupato</small></div><select data-k="conflict"><option value="number" ${s.conflict === 'number' ? 'selected' : ''}>Aggiungi un numero</option><option value="overwrite" ${s.conflict === 'overwrite' ? 'selected' : ''}>Sovrascrivi</option><option value="skip" ${s.conflict === 'skip' ? 'selected' : ''}>Salta</option></select></div>
       <div class="srow"><div><b>Qualità immagini</b><small>Per JPG, WEBP, AVIF…</small></div><input type="range" min="1" max="100" data-k="quality" value="${s.quality}"><b id="qv">${s.quality}</b></div>
       ${sw('keepDates', 'Conserva le date originali', 'Il file convertito eredita data di creazione e modifica')}
-      ${sw('hudEnabled', 'Ruota Maiusc + trascina', 'Tieni premuto Maiusc mentre trascini un file: attorno al cursore compare la ruota dei formati. Ctrl: strumenti.')}
+      <div class="srow"><div><b>Tasto ruota Conversioni</b><small>Tasto da premere o toccare mentre trascini un file per aprire la ruota dei formati (es. Spazio o C evitano la copia di file di Windows)</small></div><select data-k="keybindConvert">${KEY_OPTIONS.map(o => `<option value="${o.v}" ${(s.keybindConvert || 'shift') === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}</select></div>
+      <div class="srow"><div><b>Tasto ruota Strumenti</b><small>Tasto da premere o toccare mentre trascini un file per aprire la ruota degli strumenti rapidi</small></div><select data-k="keybindTools">${KEY_OPTIONS.map(o => `<option value="${o.v}" ${(s.keybindTools || 'ctrl') === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}</select></div>
+      ${sw('hudEnabled', 'Ruota radiale al trascinamento', `Mostra la ruota attorno al cursore trascinando file (${keyLabel(s.keybindConvert || 'shift')} per conversioni, ${keyLabel(s.keybindTools || 'ctrl')} per strumenti)`)}
       ${sw('hudOnlyExplorer', 'Solo da Esplora risorse', 'Evita che la ruota compaia trascinando in altre applicazioni')}
       ${sw('hudShowResult', 'Mostra l\'esito nella ruota', 'Anello di avanzamento e conferma al termine')}
       ${sw('closeToTray', 'Chiudi nell\'area di notifica', 'Chiudendo la finestra il programma resta attivo per la ruota')}
       ${sw('openAtLogin', 'Avvia con Windows', 'Così la ruota è sempre pronta')}`;
-    const save = async (k, v) => { S.settings = await call('setSettings', { [k]: v }); applyTheme(); if (k === 'outputMode') drawSettings(); };
+    const save = async (k, v) => {
+      if (k === 'theme') {
+        S.settings.theme = v;
+        applyTheme();
+      }
+      S.settings = await call('setSettings', { [k]: v });
+      applyTheme();
+      if (k === 'outputMode' || k === 'keybindConvert' || k === 'keybindTools') drawSettings();
+    };
     $$('[data-k]', box).forEach(i => i.onchange = () => save(i.dataset.k, i.type === 'checkbox' ? i.checked : i.type === 'range' ? +i.value : i.value));
     const qr = $('[data-k=quality]', box); qr.oninput = () => $('#qv').textContent = qr.value;
     $('#sDir').onclick = async () => { const f = await call('pickFolder'); if (f) { S.settings = await call('setSettings', { outputDir: f, outputMode: 'folder' }); drawSettings(); } };

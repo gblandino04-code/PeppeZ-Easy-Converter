@@ -12,6 +12,8 @@ const DEFAULTS = {
   hudEnabled: true,           // ruota Shift+trascina
   hudOnlyExplorer: false,     // mostra la ruota trascinando ovunque (Desktop, Esplora risorse, browser, ecc.)
   hudShowResult: true,        // mostra l'esito nella ruota
+  keybindConvert: 'shift',    // tasto per la ruota conversioni (shift | ctrl | alt | space | c | x | z | q | e | f | v | tab | capslock)
+  keybindTools: 'ctrl',       // tasto per la ruota strumenti (ctrl | shift | alt | space | c | x | z | q | e | f | v | tab | capslock)
   openAtLogin: false,
   closeToTray: true,
   fileeCli: '',               // percorso manuale della CLI di Filee (facoltativo)

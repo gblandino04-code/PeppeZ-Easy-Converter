@@ -36,7 +36,7 @@
     "asarUnpack": ["node_modules/uiohook-napi/**/*"],
     "asar": true,
     "win": { "icon": "build/icon.ico", "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }] },
-    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "createStartMenuShortcut": true, "installerIcon": "build/icon.ico", "uninstallerIcon": "build/icon.ico", "language": "1040", "artifactName": "PeppeZ-Easy-Converter-Setup-${version}.${ext}" },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "createStartMenuShortcut": true, "installerIcon": "build/icon.ico", "uninstallerIcon": "build/icon.ico", "language": "1040", "artifactName": "PeppeZ-Easy-Converter-Setup-${version}.${ext}", "include": "build/installer.nsh" },
     "portable": { "artifactName": "PeppeZ-Easy-Converter-Portable-${version}.${ext}" }
   }
 }
